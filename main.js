@@ -1,4 +1,6 @@
 let result = [];
+let randomAnswer;
+let prev;
 
 function getAllPossibleDicesValues() {
   result = [];
@@ -12,23 +14,40 @@ function getAllPossibleDicesValues() {
   }
 }
 
+function removeDrawnCardFromArray(index) {
+  result.splice(index, 1);
+}
+
+function reduceProbabilityOfSameCards(curr) {
+  if (curr === prev) {
+    if (Math.random() < 0.33) {
+      randomAnswer = drawCard();
+    }
+  }
+  prev = curr;
+}
+
+function drawCard() {
+  let randomAnswer = result[Math.floor(Math.random() * result.length)];
+  return randomAnswer;
+}
+
 function drawRandomCard() {
   if (result.length < 12) {
     getAllPossibleDicesValues();
   }
-  console.log(result.length);
-  let randomAnswer = result[Math.floor(Math.random() * result.length)];
 
-  let index = result.indexOf(randomAnswer);
-  result.splice(index, 1);
+  randomAnswer = drawCard();
+  reduceProbabilityOfSameCards(randomAnswer);
+  removeDrawnCardFromArray(result.indexOf(randomAnswer));
 
   return randomAnswer;
 }
 
 function displayResult() {
   let resultDiv = document.querySelector(".result");
-  resultDiv.textContent = drawRandomCard();
   resultDiv.classList.remove("active");
+  resultDiv.textContent = drawRandomCard();
 
   setTimeout(() => {
     resultDiv.classList.add("active");
